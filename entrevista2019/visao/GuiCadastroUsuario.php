@@ -29,33 +29,72 @@ $ao_status  = $isEdit ? (int)$u->getAoStatus() : 1;
 <div class="container">
   <h2 class="center-text"><?= $isEdit ? 'Editar Usuário' : 'Novo Usuário' ?></h2>
 
-  <form class="form-horizontal" id="cadUsuario" method="POST" action="<?= e($action) ?>">
+  <form class="form-horizontal align-left" id="cadUsuario" method="POST" action="<?= e($action) ?>">
     <?php if ($isEdit): ?>
       <input type="hidden" name="id_usuario" value="<?= (int)$id ?>">
     <?php endif; ?>
 
     <div class="formulario-campos">
-      <label for="nm_usuario">Nome</label>
-      <input type="text" name="nm_usuario" id="nm_usuario" required value="<?= e($nm_usuario) ?>">
+      <label for="nm_usuario">Nome:</label>
+      <input
+        type="text"
+        name="nm_usuario"
+        id="nm_usuario"
+        required
+        maxlength="255"
+        value="<?= e($nm_usuario) ?>"
+      >
 
-      <label for="nr_cpf">CPF</label>
-      <input type="text" name="nr_cpf" id="nr_cpf" required placeholder="000.000.000-00" value="<?= e($nr_cpf) ?>">
+      <label for="nr_cpf">CPF:</label>
+      <input
+        type="text"
+        name="nr_cpf"
+        id="nr_cpf"
+        required
+        inputmode="numeric"
+        maxlength="14"
+        pattern="\d{3}\.?\d{3}\.?\d{3}-?\d{2}"
+        title="Informe no formato 000.000.000-00"
+        placeholder="000.000.000-00"
+        value="<?= e($nr_cpf) ?>"
+      >
     </div>
 
     <div class="formulario-campos">
-      <label for="ds_login">Login</label>
-      <input type="text" name="ds_login" id="ds_login" required value="<?= e($ds_login) ?>">
+      <label for="ds_login">Login:</label>
+      <input
+        type="text"
+        name="ds_login"
+        id="ds_login"
+        required
+        maxlength="50"
+        value="<?= e($ds_login) ?>"
+      >
 
-      <label for="pw_senha">Senha <?= $isEdit ? '(deixe em branco para manter)' : '' ?></label>
-      <input type="password" name="pw_senha" id="pw_senha" <?= $isEdit ? '' : 'required' ?>>
+      <label for="pw_senha">Senha:</label>
+      <input
+        type="password"
+        name="pw_senha"
+        id="pw_senha"
+        required
+        minlength="6"
+      >
     </div>
 
     <div class="formulario-campos">
-      <label for="ds_email">Email</label>
-      <input type="email" name="ds_email" id="ds_email" required value="<?= e($ds_email) ?>">
+      <label for="ds_email">Email:</label>
+      <input
+        type="email"
+        name="ds_email"
+        id="ds_email"
+        required
+        maxlength="255"
+        value="<?= e($ds_email) ?>"
+      >
 
-      <label for="id_perfil">Perfil</label>
-      <select name="id_perfil" id="id_perfil">
+      <label for="id_perfil">Perfil:</label>
+      <select name="id_perfil" id="id_perfil" required>
+        <option value="" disabled <?= $isEdit ? '' : 'selected' ?>>Selecione...</option>
         <option value="1" <?= $id_perfil===1?'selected':'' ?>>Administrador</option>
         <option value="2" <?= $id_perfil===2?'selected':'' ?>>Atendente</option>
         <option value="3" <?= $id_perfil===3?'selected':'' ?>>Desenvolvedor</option>
@@ -73,6 +112,7 @@ $ao_status  = $isEdit ? (int)$u->getAoStatus() : 1;
     </div>
   </form>
 </div>
+
 
 <?php include_once 'Footer.php'; ?>
 

@@ -73,7 +73,7 @@ tbody tr:hover{ background:#f8f8f8; }
   background:#fff;
 }
 
-/* ===== Ajustes finos do filtro (altura menor + busca mais curta) ===== */
+/* ===== Ajustes do filtro ===== */
 #f-q,
 #f-campo{
   height:28px !important;
@@ -101,6 +101,60 @@ tbody tr:hover{ background:#f8f8f8; }
     margin-top: 50px;
     margin-bottom: 50px;
 }
+
+/* deixa o label perto do input */
+.formulario-campos{
+  margin: 0 auto;           
+  max-width: 530px;
+  display: grid;
+  grid-template-columns: 140px 1fr; 
+  column-gap: .5rem;        
+  row-gap: .75rem;
+  align-items: center;
+}
+
+/* aproxima o texto do campo da label */ 
+.formulario-campos label{
+  margin: 0;
+  text-align: right;        
+  white-space: nowrap;
+}
+.formulario-campos input,
+.formulario-campos select{
+  width: 100%;
+}
+
+.alert{
+  padding:.6rem .8rem;border-radius:4px;margin:0 0 1rem;border:1px solid transparent;
+  opacity: 1; transition: opacity .3s ease;   /* animação */
+}
+.alert-success{background:#e6f6ec;border-color:#bfe7cc;color:#0a572a}
+.alert-error{background:#fdecea;border-color:#f5c2c2;color:#8a1212}
+.alert-warn{background:#fff6e5;border-color:#ffe0a8;color:#7a4e00}
+
+/* estado de saída */
+.alert.is-hiding{ opacity: 0; }
+
+/* ===== Menu ===== */
+.topnav{
+  display:flex;
+  gap:.5rem;
+  padding:.5rem 1rem;
+  background: rgba(0,0,0,.08);
+}
+.topnav a{
+  color:#fff;
+  text-decoration:none;
+  padding:.45rem .75rem;
+  border-radius:6px;
+  transition:background .2s ease, opacity .2s ease;
+}
+.topnav a:hover{ background: rgba(255,255,255,.18); }
+.topnav a.active{
+  background: rgba(255,255,255,.28);
+  font-weight:600;
+}
+
 
 
 

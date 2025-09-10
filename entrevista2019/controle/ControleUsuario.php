@@ -1,14 +1,19 @@
 <?php
-// controler/ControlerUsuario.php
+// controle/ControleUsuario.php
 include_once '../base_dir.php';
 include_once DIR_UTIL . 'Define.php';
 include_once DIR_MODELO . 'UsuarioVO.class.php';
 include_once DIR_PERSISTENCIA . 'UsuarioDAO.class.php';
 
+// OPCIONAL: ligar erros durante debug
+// ini_set('display_errors', 1);
+// ini_set('display_startup_errors', 1);
+// error_reporting(E_ALL);
+
 $op  = $_GET['op'] ?? '';
 $dao = new UsuarioDAO();
 
-function backToList($code = ''){
+function backToList(string $code = ''): void {
   $q = $code ? ('?msg='.$code) : '';
   header('Location: ../visao/GuiUsuarios.php'.$q);
   exit;
@@ -16,16 +21,17 @@ function backToList($code = ''){
 
 try {
   switch ($op) {
-    case 'listar':
-      // Normalmente a view chama o DAO direto; se quiser JSON:
+
+    case 'listar': {
       header('Content-Type: application/json; charset=utf-8');
       echo json_encode($dao->listar());
       exit;
+    } break;
 
     case 'salvar': {
       $dados = [
         'nm_usuario' => trim($_POST['nm_usuario'] ?? ''),
-        'nr_cpf'     => preg_replace('/\D+/', '', $_POST['nr_cpf'] ?? ''), // só dígitos
+        'nr_cpf'     => preg_replace('/\D+/', '', $_POST['nr_cpf'] ?? ''),
         'ds_email'   => trim($_POST['ds_email'] ?? ''),
         'ds_login'   => trim($_POST['ds_login'] ?? ''),
         'pw_senha'   => trim($_POST['pw_senha'] ?? ''),
@@ -33,7 +39,6 @@ try {
         'ao_status'  => isset($_POST['ao_status']) ? 1 : 0,
       ];
 
-      // Validações
       $erros = [];
       foreach (['nm_usuario','nr_cpf','ds_email','ds_login','pw_senha'] as $f) {
         if ($dados[$f] === '') $erros[$f] = 'Campo obrigatório';
@@ -48,15 +53,14 @@ try {
         $erros['pw_senha'] = 'Senha deve ter ao menos 6 caracteres';
       }
 
-      //Se houver erros, reexibe o formulário com os valores já digitados
       if (!empty($erros)) {
-        $old   = $dados;       
+        $old = $dados;
         unset($old['pw_senha']);
+        // mostra a view de cadastro novamente com $old / $erros
         include '../visao/GuiCadastroUsuario.php';
         exit;
       }
 
-      Persistência
       $vo = new UsuarioVO();
       $vo->setNmUsuario($dados['nm_usuario']);
       $vo->setNrCpf($dados['nr_cpf']);
@@ -70,12 +74,11 @@ try {
       $vo->setDtCadastro(date('Y-m-d H:i:s'));
       $vo->setDtAlteracao(date('Y-m-d H:i:s'));
 
-      $dao->cadastrar($vo);
-      back('add_ok');
-    }
+      if ($dao->cadastrar($vo)) backToList('add_ok');
+      backToList('add_err');
+    } break;
 
-
-    case 'atualizar':
+    case 'atualizar': {
       $id = (int)($_POST['id_usuario'] ?? 0);
       if ($id <= 0) backToList('upd_err');
 
@@ -85,23 +88,27 @@ try {
       $u->setNrCpf(preg_replace('/\D+/', '', $_POST['nr_cpf'] ?? ''));
       $u->setDsEmail(trim($_POST['ds_email'] ?? ''));
       $u->setDsLogin(trim($_POST['ds_login'] ?? ''));
-      $u->setPwSenha(trim($_POST['pw_senha'] ?? '')); // se vier vazia, DAO pode ignorar
+      $u->setPwSenha(trim($_POST['pw_senha'] ?? '')); // se vier vazia o DAO ignora
       $u->setIdPerfil((int)($_POST['id_perfil'] ?? 1));
       $u->setAoStatus(isset($_POST['ao_status']) ? 1 : 0);
       $u->setIdUsuarioalteracao(1);
       $u->setDtAlteracao(date('Y-m-d H:i:s'));
 
-      $dao->atualizar($u);
-      backToList('upd_ok');
+      if ($dao->atualizar($u)) backToList('upd_ok');
+      backToList('upd_err');
+    } break;
 
-    case 'deletar':
+    case 'deletar': {
+      // precisa vir via POST com name="id"
       $id = (int)($_POST['id'] ?? 0);
       if ($id > 0 && $dao->deletar($id)) backToList('del_ok');
       backToList('del_err');
+    } break;
 
     default:
       backToList();
   }
 } catch (Throwable $e) {
+  // durante debug, você pode var_dump($e->getMessage());
   backToList('err');
 }
